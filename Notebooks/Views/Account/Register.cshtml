@@ -1,0 +1,59 @@
+﻿@model Notebooks.ViewModels.RegisterViewModel
+<h2>Register</h2>
+<form method="post" asp-controller="Account" asp-action="Register">
+    <div asp-validation-summary="ModelOnly"></div>
+    <div class="form-group row">
+        <div class="col-lg-1">
+            <label asp-for="Email">Email:</label>
+        </div>
+        <div class="col-3">
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-lg-1">
+            <label asp-for="Name">Name:</label>
+        </div>
+        <div class="col-3">
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-lg-1">
+            <label asp-for="Surname">Surname:</label>
+        </div>
+        <div class="col-3">
+            <input asp-for="Surname" class="form-control" />
+            <span asp-validation-for="Surname" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-lg-1">
+            <label asp-for="Password">Password:</label>
+        </div>
+        <div class="col-3">
+            <input asp-for="Password" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-lg-1">
+            <label asp-for="PasswordConfirm">Confirm password:</label>
+        </div>
+        <div class="col-3">
+            <input asp-for="PasswordConfirm" class="form-control" />
+            <span asp-validation-for="PasswordConfirm" class="text-danger"></span>
+        </div>
+    </div>
+    <div>
+        <label asp-for="IsAdmin">Admin</label>
+        <input asp-for="IsAdmin" />
+    </div>
+    <div>
+        <div class="col-lg-2">
+            <input type="submit" class="btn badge-info" value="Register" />
+        </div>
+    </div>
+</form>
