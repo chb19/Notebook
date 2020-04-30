@@ -11,10 +11,10 @@ namespace Notebooks.Models
     {
         [Key]
         public int Id { get; set; }
-        [StringLength(47, MinimumLength = 3)]
+        [StringLength(47, MinimumLength = 1)]
         [Required]
         public string Name { get; set; }
-        [StringLength(47, MinimumLength = 3)]
+        [StringLength(47, MinimumLength = 1)]
         [Required]
         public string Surname { get; set; }
         [Required]
@@ -22,9 +22,9 @@ namespace Notebooks.Models
         public string PhoneNumber { get; set; }
         [Required]
         public string City { get; set; }
-        [Range(1, 110)]
+        [Range(0, 110)]
         [Required]            
-        public int Age { get; set; }
+        public int Age { get ; set; }
         [ForeignKey("User")]
         public int UserID { get; set; }
     }

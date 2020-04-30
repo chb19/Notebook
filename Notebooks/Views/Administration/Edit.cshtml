@@ -1,0 +1,14 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model Notebooks.ViewModels.CreateRoleViewModel
+
+<h2>Edit user @Model.UserEmail</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" name="userId" value="@Model.UserId" />
+    <div class="form-group">
+        <input type="checkbox" name="status" value="true"
+               @(Model.IsActive ? "checked=\"checked\"" : "") />Is active<br />
+
+    </div>
+    <button type="submit" class="btn btn-primary col-1">Save</button>
+</form>

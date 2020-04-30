@@ -34,6 +34,7 @@ namespace Notebooks.ViewModels
         [Display(Name = "Confirm password")]
         public string PasswordConfirm { get; set; }
 
-        public bool IsAdmin { get; set; }
+        [Required]
+        public string Role { get; set; }
     }
 }

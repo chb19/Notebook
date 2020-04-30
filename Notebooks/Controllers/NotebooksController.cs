@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using Notebooks.Models;
 namespace Notebooks.Controllers
 {
 
-    [Authorize(Roles ="Admin,User")]
+    [Authorize(Roles ="Admin,Contributor,Viewer")]
     public class NotebooksController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -22,13 +23,13 @@ namespace Notebooks.Controllers
         public Notebook Notebook { get; set; }
         public IActionResult Index()
         {
-            return View();
+            User model = new User { Id = int.Parse(User.Identity.GetUserId()) };
+            return View("Index",  model);
         }
-        [Authorize(Roles ="User")]
+        [Authorize(Roles ="Contributor,Admin")]
         public IActionResult Upsert(int? id)
         {
             Notebook = new Notebook();
-            Notebook.UserID = GetUserId();
             if (id == null)
             {
                 return View(Notebook);
@@ -38,19 +39,25 @@ namespace Notebooks.Controllers
             {
                 return NotFound();
             }
+            int user_id = int.Parse(User.Identity.GetUserId());
+            if (Notebook.UserID != user_id && !User.IsInRole("Admin"))
+            {
+                return View("AccessDenied");
+            }
             return View(Notebook);
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "Contributor,Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Upsert()
         {
             if (ModelState.IsValid)
             {
-                Notebook.UserID = GetUserId();
+                int user_id = int.Parse(User.Identity.GetUserId());
                 if (Notebook.Id == 0)
                 {
+                    Notebook.UserID = user_id;
                     _db.Notebooks.Add(Notebook);
                 }
                 else
@@ -58,34 +65,45 @@ namespace Notebooks.Controllers
                     _db.Notebooks.Update(Notebook);
                 }
                 _db.SaveChanges();
+                if (User.IsInRole("Admin"))
+                {
+                    return RedirectToAction("UserList", new { id = Notebook.UserID });
+                }
                 return RedirectToAction("Index");
             }
             return View(Notebook);
         }
 
-        public int GetUserId()
-        {
-            string em = User.Identity.Name;
-            User user = _db.Users.FirstOrDefault(u => u.Email == em);
-            return user.Id;
-        }
-
-        #region API Calls
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            if (User.IsInRole("Admin"))
+            if (User.IsInRole("Viewer") || User.IsInRole("Admin"))
             {
                 return Json(new { data = await _db.Notebooks.ToListAsync() });
             }
             else
             {
-                int id = GetUserId();
+                int id = int.Parse(User.Identity.GetUserId());
                 return Json(new { data = await _db.Notebooks.Where(u => u.UserID == id).ToListAsync() });
             }
         }
 
-        [Authorize(Roles = "User")]
+        [HttpGet]
+        [Authorize(Roles="Admin")]
+        public async Task<IActionResult> GetByUser(string id)
+        {
+            return Json(new { data = await _db.Notebooks.Where(u => u.UserID == int.Parse(id)).ToListAsync() });
+        }
+
+        [Authorize(Roles="Admin")]
+        public IActionResult UserList(string id)
+        {
+            User model = new User{ Id = int.Parse(id) } ;
+            return View("UserList", model);
+        }
+
+
+        [Authorize(Roles = "Contributor,Admin")]
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
@@ -98,7 +116,6 @@ namespace Notebooks.Controllers
             await _db.SaveChangesAsync();
             return Json(new { success = true, message = "Delete successful." });
         }
-        #endregion
     }
 
 }

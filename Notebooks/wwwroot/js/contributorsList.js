@@ -7,11 +7,11 @@ $(document).ready(function () {
 function loadDataTable() {
     dataTable = $('#DT_load').DataTable({
         "ajax": {
-            "url": `/notebooks/getbyuser/${userid}`,
+            "url": "/notebooks/getall/",
             "type": "GET",
             "datatype": "json"
         },
-
+        
         "columns": [
             { "data": "name", "width": "16%" },
             { "data": "surname", "width": "16%" },
@@ -19,7 +19,7 @@ function loadDataTable() {
             { "data": "city", "width": "16%" },
             { "data": "age", "width": "16%" },
             {
-                "data": "id",
+                "data":  "id",
                 "render": function (data) {
                     return `<div class="text-center">
                     <a href="/Notebooks/Upsert?id=${data}" class='btn btn-success text-white' style='cursor:pointer; width:70px;'>

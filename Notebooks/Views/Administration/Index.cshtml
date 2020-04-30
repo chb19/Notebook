@@ -1,0 +1,26 @@
+﻿@model IEnumerable<Notebooks.Controllers.UserRole>
+
+<h2>List of roles</h2>
+<table class="table">
+    @foreach (var role in Model)
+    {
+        <tr>
+            <td>@role.Name</td>
+            <td>
+                <form asp-action="DeleteRole" asp-route-id="@role.Id" method="post">
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+</table>
+<div class="form-row">
+    <div>
+        <a asp-action="Create" class="btn btn-primary form-control">Add role</a>
+    </div>
+    <div>
+        <a asp-action="UserList" class="btn btn-primary form-control">List of users</a>
+    </div>
+</div>
